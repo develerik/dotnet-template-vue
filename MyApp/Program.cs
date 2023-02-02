@@ -4,10 +4,20 @@ using Microsoft.OpenApi.Models;
 using MyApp;
 using MyApp.Filters;
 using MyApp.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// add Vue spa static files
+// configure serilog
+builder.Host.UseSerilog((ctx, config) => {
+  config
+    .ReadFrom.Configuration(ctx.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("myapp.log");
+});
+
+// configure Vue spa static files
 builder.Services.AddSpaStaticFiles(o => { o.RootPath = "ClientApp/dist"; });
 
 // configure JSON serializer with sane defaults
