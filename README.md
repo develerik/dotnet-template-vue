@@ -2,6 +2,12 @@
 
 .NET 6.0 Vue+Vite App Template
 
+## Requirements
+
+- [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- [Node.js >=18.12](https://nodejs.org/en/download) (corepack enabled)
+- [Docker](https://www.docker.com) or [Podman](https://podman.io) (optional)
+
 ## Usage
 
 ```shell

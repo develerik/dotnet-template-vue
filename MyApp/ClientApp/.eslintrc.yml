@@ -1,0 +1,49 @@
+---
+root: true
+
+env:
+  browser: true
+  es2022: true
+
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+
+extends:
+  - airbnb-base
+  - plugin:import/errors
+  - plugin:import/warnings
+  - plugin:vue/vue3-recommended
+
+plugins:
+  - import
+  - vue
+
+rules:
+  arrow-parens:
+    - error
+    - as-needed
+  import/extensions:
+    - error
+    - ignorePackages
+    - js: always
+  max-len:
+    - error
+    - 100
+  no-plusplus:
+    - error
+    - allowForLoopAfterthoughts: true
+  quotes:
+    - error
+    - double
+  vue/script-indent:
+    - error
+    - 2
+    - baseIndent: 1
+      switchCase: 1
+
+overrides:
+  - files:
+      - "*.vue"
+    rules:
+      indent: 0
