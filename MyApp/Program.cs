@@ -3,27 +3,28 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using MyApp;
 using MyApp.Filters;
+using MyApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // add Vue spa static files
-builder.Services.AddSpaStaticFiles(options => { options.RootPath = "ClientApp/dist"; });
+builder.Services.AddSpaStaticFiles(o => { o.RootPath = "ClientApp/dist"; });
 
 // configure JSON serializer with sane defaults
 builder.Services.AddControllers()
-  .AddJsonOptions(options => {
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.JsonSerializerOptions.WriteIndented = builder.Environment.IsDevelopment();
-    options.JsonSerializerOptions.Converters.Add(
+  .AddJsonOptions(o => {
+    o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    o.JsonSerializerOptions.WriteIndented = builder.Environment.IsDevelopment();
+    o.JsonSerializerOptions.Converters.Add(
       new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
   });
 
 // configure swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
-  c.EnableAnnotations();
-  c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyApp API", Version = "v1" });
-  c.AddSecurityDefinition(
+builder.Services.AddSwaggerGen(o => {
+  o.EnableAnnotations();
+  o.SwaggerDoc("v1", new OpenApiInfo { Title = "MyApp API", Version = "v1" });
+  o.AddSecurityDefinition(
     "Bearer",
     new OpenApiSecurityScheme {
       In = ParameterLocation.Header,
@@ -33,7 +34,7 @@ builder.Services.AddSwaggerGen(c => {
       BearerFormat = "JWT",
       Description = "Standard Bearer Authorization header. Example: `\"Bearer {token}\"`",
     });
-  c.OperationFilter<AuthorizationOperationFilter>();
+  o.OperationFilter<AuthorizationOperationFilter>();
 });
 
 var app = builder.Build();
@@ -42,8 +43,9 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// configure authorization middleware
+// configure authorization middlewares
 app.UseAuthorization();
+app.UseMiddleware<JwtMiddleware>();
 
 // configure controller mapping
 app.MapControllers();
@@ -54,8 +56,8 @@ app.UseSpaStaticFiles();
 // configure path mappings
 app.MapWhen(
   x => !x.Request.Path.Value?.StartsWith("/api") ?? true,
-  c => {
-    c.UseSpa(spa => {
+  b => {
+    b.UseSpa(spa => {
       spa.Options.SourcePath = "ClientApp";
       if (builder.Environment.IsDevelopment()) {
         spa.UseViteDevServer();

@@ -3,6 +3,7 @@ namespace MyApp.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using AuthorizeAttribute = MyApp.Attributes.AuthorizeAttribute;
 
 /// <summary>
 ///   Swagger authorization filter.
